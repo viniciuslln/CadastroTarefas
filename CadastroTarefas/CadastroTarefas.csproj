@@ -171,13 +171,26 @@
     </ApplicationDefinition>
     <Compile Include="Converters\StringNotEmptyToVisibilityConverter.cs" />
     <Compile Include="Converters\StringEmptyToVisibilityConverter.cs" />
-    <Compile Include="Resources\Strings.Designer.cs">
+    <Compile Include="ListItens\TodoTaskItem.xaml.cs">
+      <DependentUpon>TodoTaskItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Messages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Strings.resx</DependentUpon>
+      <DependentUpon>Messages.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\PagesText.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PagesText.resx</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\SignUpViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\TasksViewModel.cs" />
+    <Page Include="ListItens\TodoTaskItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -230,9 +243,13 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Strings.resx">
+    <EmbeddedResource Include="Resources\Messages.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>Messages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\PagesText.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>PagesText.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
