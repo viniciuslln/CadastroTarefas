@@ -32,7 +32,7 @@
             BorderBrush="Gray"
             BorderThickness="5"
             CornerRadius="4">
-            <StackPanel Orientation="Vertical">
+            <StackPanel VerticalAlignment="Stretch" Orientation="Vertical">
 
                 <TextBlock
                     Margin="20"

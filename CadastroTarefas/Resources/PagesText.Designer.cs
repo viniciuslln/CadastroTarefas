@@ -22,14 +22,14 @@ namespace CadastroTarefas.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Strings {
+    public class PagesText {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Strings() {
+        internal PagesText() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace CadastroTarefas.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CadastroTarefas.Resources.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CadastroTarefas.Resources.PagesText", typeof(PagesText).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,38 +61,29 @@ namespace CadastroTarefas.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Informe a senha.
+        ///   Looks up a localized string similar to Feitas.
         /// </summary>
-        public static string PasswordEmptyMessage {
+        public static string DoneTasks {
             get {
-                return ResourceManager.GetString("PasswordEmptyMessage", resourceCulture);
+                return ResourceManager.GetString("DoneTasks", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Já existe um usuário com este nome cadastrado.
+        ///   Looks up a localized string similar to Nova Tarefa.
         /// </summary>
-        public static string UserAlreadyRegisteredMessage {
+        public static string NewTasks {
             get {
-                return ResourceManager.GetString("UserAlreadyRegisteredMessage", resourceCulture);
+                return ResourceManager.GetString("NewTasks", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Informe o nome do usuário.
+        ///   Looks up a localized string similar to À fazer.
         /// </summary>
-        public static string UsernameEmptyMessage {
+        public static string TodoTasks {
             get {
-                return ResourceManager.GetString("UsernameEmptyMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Usuário ou senha incorretos.
-        /// </summary>
-        public static string UserPasswordWrongMessage {
-            get {
-                return ResourceManager.GetString("UserPasswordWrongMessage", resourceCulture);
+                return ResourceManager.GetString("TodoTasks", resourceCulture);
             }
         }
     }

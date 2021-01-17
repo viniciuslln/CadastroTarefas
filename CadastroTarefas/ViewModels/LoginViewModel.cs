@@ -56,13 +56,13 @@ namespace CadastroTarefas.ViewModels
 
             if (string.IsNullOrEmpty(Username))
             {
-                ErrorMessage = Strings.UsernameEmptyMessage;
+                ErrorMessage = Messages.UsernameEmptyMessage;
                 return;
             }
 
             if (string.IsNullOrEmpty(Password))
             {
-                ErrorMessage = Strings.PasswordEmptyMessage;
+                ErrorMessage = Messages.PasswordEmptyMessage;
                 return;
             }
 
@@ -75,7 +75,7 @@ namespace CadastroTarefas.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = Strings.UserPasswordWrongMessage;
+                    ErrorMessage = Messages.UserPasswordWrongMessage;
                 }
             }
         }

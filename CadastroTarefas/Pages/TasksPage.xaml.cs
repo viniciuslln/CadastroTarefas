@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using CadastroTarefas.ViewModels;
+using System.Windows.Controls;
 
 namespace CadastroTarefas.Pages
 {
@@ -10,6 +11,7 @@ namespace CadastroTarefas.Pages
         public TasksPage()
         {
             InitializeComponent();
+            DataContext = new TasksViewModel();
         }
     }
 }
