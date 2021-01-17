@@ -1,0 +1,63 @@
+﻿<Page
+    x:Class="CadastroTarefas.Pages.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CadastroTarefas.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:CadastroTarefas.ViewModels"
+    Title="LoginPage"
+    d:DataContext="vm:LoginViewModel"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <Style TargetType="StackPanel">
+                <Style.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="0,16,0,0" />
+                    </Style>
+                </Style.Resources>
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+
+        <Border
+            Padding="20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            BorderBrush="Gray"
+            BorderThickness="5"
+            CornerRadius="4">
+            <StackPanel Orientation="Vertical">
+
+                <TextBlock
+                    Margin="20"
+                    FontSize="75"
+                    Text="Entrar">
+                    <TextBlock.Foreground>
+                        <LinearGradientBrush>
+                            <GradientStop Color="#DCE35B" />
+                            <GradientStop Offset="1" Color="#45B649" />
+                        </LinearGradientBrush>
+                    </TextBlock.Foreground>
+                </TextBlock>
+                <Label Content="informe o usuário" />
+                <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Content="informe a senha" />
+                <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Command="{Binding LoginCommand}" Content="Entrar" />
+                <Button Command="{Binding SignUpCommand}" Content="Criar novo usuário" />
+                <TextBlock
+                    Foreground="Red"
+                    Text="{Binding ErrorMessage}"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
+
+            </StackPanel>
+        </Border>
+
+    </Grid>
+</Page>

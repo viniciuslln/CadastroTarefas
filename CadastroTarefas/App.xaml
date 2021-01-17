@@ -1,0 +1,14 @@
+﻿<Application
+    x:Class="CadastroTarefas.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cvt="clr-namespace:CadastroTarefas.Converters"
+    xmlns:local="clr-namespace:CadastroTarefas"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <cvt:StringEmptyToVisibilityConverter x:Key="StringEmptyToVisibilityConverter" />
+            <cvt:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVisibilityConverter" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
