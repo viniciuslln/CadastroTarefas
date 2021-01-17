@@ -1,4 +1,5 @@
-﻿using DataLayer;
+﻿using CadastroTarefas.Resources;
+using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
@@ -13,14 +14,13 @@ namespace CadastroTarefas.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         private string username;
-
         public string Username
         {
             get { return username; }
             set { SetProperty(ref username, value); }
         }
+       
         private string password;
-
         public string Password
         {
             get { return password; }
@@ -28,7 +28,6 @@ namespace CadastroTarefas.ViewModels
         }
 
         private string errorMessage;
-
         public string ErrorMessage
         {
             get { return errorMessage; }
@@ -36,6 +35,7 @@ namespace CadastroTarefas.ViewModels
         }
 
         public ICommand LoginCommand { get; private set; }
+        
         public ICommand SignUpCommand { get; private set; }
 
         public LoginViewModel()
@@ -56,13 +56,13 @@ namespace CadastroTarefas.ViewModels
 
             if (string.IsNullOrEmpty(Username))
             {
-                ErrorMessage = "informe o nome do usuário";
+                ErrorMessage = Strings.UsernameEmptyMessage;
                 return;
             }
 
             if (string.IsNullOrEmpty(Password))
             {
-                ErrorMessage = "informe a senha";
+                ErrorMessage = Strings.PasswordEmptyMessage;
                 return;
             }
 
@@ -75,7 +75,7 @@ namespace CadastroTarefas.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = "Usuário ou senha incorretos";
+                    ErrorMessage = Strings.UserPasswordWrongMessage;
                 }
             }
         }

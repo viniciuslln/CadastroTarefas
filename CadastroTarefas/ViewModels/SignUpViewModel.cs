@@ -1,4 +1,5 @@
-﻿using DataLayer;
+﻿using CadastroTarefas.Resources;
+using DataLayer;
 using Microsoft.EntityFrameworkCore;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
@@ -56,13 +57,13 @@ namespace CadastroTarefas.ViewModels
 
             if (string.IsNullOrEmpty(Username))
             {
-                ErrorMessage = "informe o nome do usuário";
+                ErrorMessage = Strings.UsernameEmptyMessage;
                 return;
             }
 
             if (string.IsNullOrEmpty(Password))
             {
-                ErrorMessage = "informe a senha";
+                ErrorMessage = Strings.PasswordEmptyMessage;
                 return;
             }
 
@@ -71,7 +72,7 @@ namespace CadastroTarefas.ViewModels
 
                 if (await db.Users.FirstOrDefaultAsync(u => u.Username == Username) != null)
                 {
-                    ErrorMessage = "Já existe um usuário com este nome cadastrado";
+                    ErrorMessage = Strings.UserAlreadyRegisteredMessage;
                     return;
                 }
 
@@ -91,7 +92,7 @@ namespace CadastroTarefas.ViewModels
 
         private void NavigateToSignUpPage()
         {
-            (Application.Current.MainWindow as NavigationWindow).NavigationService.Navigate(new Uri("Pages/SingUpPage.xaml", UriKind.Relative));
+            (Application.Current.MainWindow as NavigationWindow).NavigationService.GoBack();
         }
     }
 }
