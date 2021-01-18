@@ -79,6 +79,7 @@ namespace CadastroTarefas.ViewModels
                 var user = await db.Users.AddAsync(new User { Username = Username, Password = Password });
                 if (await db.SaveChangesAsync() > 0)
                 {
+                    App.LoggedUser = user.Entity; 
                     NavigateToMainPage();
                 }
 

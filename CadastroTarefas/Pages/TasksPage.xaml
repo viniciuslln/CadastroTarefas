@@ -24,9 +24,18 @@
                 </Style.Resources>
             </Style>
 
+            <Style x:Key="NoFocusableListItem" TargetType="{x:Type ListViewItem}">
+                <Setter Property="Focusable" Value="False" />
+            </Style>
+
             <DataTemplate x:Key="TodoTaskItem">
                 <li:TodoTaskItem />
             </DataTemplate>
+
+            <DataTemplate x:Key="CompletedTaskItem">
+                <li:CompletedTaskItem />
+            </DataTemplate>
+
         </ResourceDictionary>
     </Page.Resources>
 
@@ -79,15 +88,10 @@
                     HorizontalContentAlignment="Stretch"
                     Background="Transparent"
                     BorderBrush="Transparent"
+                    ItemContainerStyle="{StaticResource ResourceKey=NoFocusableListItem}"
                     ItemTemplate="{StaticResource ResourceKey=TodoTaskItem}"
                     ItemsSource="{Binding TodoTasks}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Focusable" Value="False" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                </ListView>
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
             </Grid>
         </Border>
 
@@ -106,12 +110,13 @@
                     Text="{x:Static resx:PagesText.DoneTasks}" />
                 <ListView
                     Grid.Row="1"
+                    HorizontalContentAlignment="Stretch"
                     Background="Transparent"
-                    BorderBrush="Transparent">
-                    <ListView.ItemTemplate>
-                        <DataTemplate />
-                    </ListView.ItemTemplate>
-                </ListView>
+                    BorderBrush="Transparent"
+                    ItemContainerStyle="{StaticResource ResourceKey=NoFocusableListItem}"
+                    ItemTemplate="{StaticResource ResourceKey=CompletedTaskItem}"
+                    ItemsSource="{Binding CompletedTasks}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
             </Grid>
         </Border>
 

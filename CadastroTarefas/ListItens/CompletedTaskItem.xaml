@@ -1,5 +1,5 @@
 ﻿<Border
-    x:Class="CadastroTarefas.ListItens.TodoTaskItem"
+    x:Class="CadastroTarefas.ListItens.CompletedTaskItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -29,21 +29,6 @@
             Padding="8"
             Text="{Binding Description, FallbackValue=None}"
             TextWrapping="Wrap" />
-
-        <Button
-            Grid.Row="1"
-            Grid.Column="0"
-            Padding="8"
-            Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-            CommandParameter="{Binding .}"
-            Content="Editar" />
-        <Button
-            Grid.Row="1"
-            Grid.Column="1"
-            Padding="8"
-            Command="{Binding DataContext.CompleteCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
-            CommandParameter="{Binding .}"
-            Content="Concluir" />
         <Button
             Grid.Row="1"
             Grid.Column="2"

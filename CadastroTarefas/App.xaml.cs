@@ -9,6 +9,9 @@ namespace CadastroTarefas
     /// </summary>
     public partial class App : Application
     {
+
+        public static User LoggedUser { get; set; }
+
         protected override void OnStartup(StartupEventArgs e)
         {
             using (var db = new CadastroTarefasContext())

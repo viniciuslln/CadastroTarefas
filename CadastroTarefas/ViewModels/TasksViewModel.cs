@@ -35,29 +35,35 @@ namespace CadastroTarefas.ViewModels
             RemoveCommand = new AsyncCommand<UserTask>(RemoveTask);
         }
 
-        private async Task RemoveTask(UserTask arg)
+        private async Task RemoveTask(object arg)
         {
             using (var db = new CadastroTarefasContext())
             {
-                db.UserTasks.Remove(arg);
-                await LoadTasks();
+                if (arg is UserTask task)
+                {
+                    db.UserTasks.Remove(task);
+                    await db.SaveChangesAsync();
+                    await LoadTasks();
+                }
             }
         }
 
-        private async Task CompleteTask(UserTask arg)
+        private async Task CompleteTask(object arg)
         {
             using (var db = new CadastroTarefasContext())
             {
-                arg.TaskStatus = DataLayer.TaskStatus.COMPLETED;
-                db.UserTasks.Update(arg);
-                await LoadTasks();
+                if (arg is UserTask task)
+                {
+                    task.TaskStatus = DataLayer.TaskStatus.COMPLETED;
+                    db.UserTasks.Update(task);
+                    await db.SaveChangesAsync();
+                    await LoadTasks();
+                }
             }
         }
 
         private async Task EditTask(UserTask arg)
         {
-
-
 
         }
 
@@ -68,9 +74,9 @@ namespace CadastroTarefas.ViewModels
                 TodoTasks.Clear();
                 CompletedTasks.Clear();
 
-                db.UserTasks.Where(ut => ut.UserId == 1 && ut.TaskStatus == DataLayer.TaskStatus.TODO).ToList()
+                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.TODO).ToList()
                     .ForEach(t => TodoTasks.Add(t));
-                db.UserTasks.Where(ut => ut.UserId == 1 && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED).ToList()
+                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED).ToList()
                     .ForEach(t => CompletedTasks.Add(t));
             }
         }
@@ -79,11 +85,14 @@ namespace CadastroTarefas.ViewModels
         {
             using (var db = new CadastroTarefasContext())
             {
-                var task = new UserTask { Description = NewTaskDescription, UserId = 1, TaskStatus = DataLayer.TaskStatus.TODO };
-                await db.UserTasks.AddAsync(task);
-                await db.SaveChangesAsync();
-                NewTaskDescription = "";
-                await LoadTasks();
+                if (!string.IsNullOrEmpty(NewTaskDescription))
+                {
+                    var task = new UserTask { Description = NewTaskDescription, UserId = App.LoggedUser.Id, TaskStatus = DataLayer.TaskStatus.TODO };
+                    await db.UserTasks.AddAsync(task);
+                    await db.SaveChangesAsync();
+                    NewTaskDescription = "";
+                    await LoadTasks();
+                }
             }
         }
     }
