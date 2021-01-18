@@ -173,6 +173,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\StringNotEmptyToVisibilityConverter.cs" />
     <Compile Include="Converters\StringEmptyToVisibilityConverter.cs" />
     <Compile Include="ListItens\CompletedTaskItem.xaml.cs">
@@ -181,6 +182,7 @@
     <Compile Include="ListItens\TodoTaskItem.xaml.cs">
       <DependentUpon>TodoTaskItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\UserTaskModel.cs" />
     <Compile Include="Resources\Messages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -271,9 +273,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\DataLayer\DataLayer.csproj">
       <Project>{2390d66f-69a3-4f22-8513-9d8daae4a989}</Project>

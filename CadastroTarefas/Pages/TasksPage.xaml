@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:li="clr-namespace:CadastroTarefas.ListItens"
-    xmlns:local="clr-namespace:CadastroTarefas.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:CadastroTarefas.Resources"
     Title="TasksPage"
@@ -35,7 +34,6 @@
             <DataTemplate x:Key="CompletedTaskItem">
                 <li:CompletedTaskItem />
             </DataTemplate>
-
         </ResourceDictionary>
     </Page.Resources>
 
@@ -52,21 +50,43 @@
             Margin="20"
             VerticalAlignment="top">
             <StackPanel Orientation="Vertical">
+
                 <TextBlock
                     Margin="8"
                     HorizontalAlignment="Center"
                     FontSize="30"
-                    Text="{x:Static resx:PagesText.NewTasks}" />
+                    Text="{Binding TaskEditionTitle, FallbackValue='{x:Static resx:PagesText.NewTasks}'}" />
                 <Label Margin="8" Content="descrição da tarefa" />
+
                 <TextBox
                     Margin="8"
                     MinLines="5"
                     Text="{Binding NewTaskDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="Wrap" />
+
                 <Button
                     Margin="8"
                     Command="{Binding SaveTaskCommand}"
-                    Content="adicionar tarefa" />
+                    Content="adicionar tarefa"
+                    Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter={StaticResource True}}" />
+
+                <Grid Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        Margin="8"
+                        Command="{Binding CancelEditCommand}"
+                        Content="cancelar" />
+                    <Button
+                        Grid.Column="1"
+                        Margin="8"
+                        Command="{Binding SaveTaskCommand}"
+                        Content="salvar" />
+                </Grid>
             </StackPanel>
         </Border>
 
@@ -119,6 +139,5 @@
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled" />
             </Grid>
         </Border>
-
     </Grid>
 </Page>

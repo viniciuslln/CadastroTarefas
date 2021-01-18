@@ -1,7 +1,8 @@
-﻿using DataLayer;
+﻿using CadastroTarefas.Models;
+using CadastroTarefas.Resources;
+using DataLayer;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -10,6 +11,24 @@ namespace CadastroTarefas.ViewModels
 {
     public class TasksViewModel : BaseViewModel
     {
+        private UserTask editingTask = null;
+
+        private string taskEditionTitle = PagesText.NewTasks;
+
+        public string TaskEditionTitle
+        {
+            get { return taskEditionTitle; }
+            set { SetProperty(ref taskEditionTitle, value); }
+        }
+
+        private bool isEditMode = false;
+
+        public bool IsEditMode
+        {
+            get { return isEditMode; }
+            set { SetProperty(ref isEditMode, value); }
+        }
+
         private string newTaskDescription;
 
         public string NewTaskDescription
@@ -18,53 +37,63 @@ namespace CadastroTarefas.ViewModels
             set { SetProperty(ref newTaskDescription, value); }
         }
 
-        public ObservableRangeCollection<UserTask> TodoTasks { get; set; } = new ObservableRangeCollection<UserTask>();
-        public ObservableRangeCollection<UserTask> CompletedTasks { get; set; } = new ObservableRangeCollection<UserTask>();
+        public ObservableRangeCollection<UserTaskModel> TodoTasks { get; set; } = new ObservableRangeCollection<UserTaskModel>();
+        public ObservableRangeCollection<UserTaskModel> CompletedTasks { get; set; } = new ObservableRangeCollection<UserTaskModel>();
 
         public ICommand SaveTaskCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand CompleteCommand { get; set; }
         public ICommand RemoveCommand { get; set; }
+        public ICommand CancelEditCommand { get; set; }
 
         public TasksViewModel()
         {
             LoadTasks().SafeFireAndForget();
             SaveTaskCommand = new AsyncCommand(SaveTask);
-            EditCommand = new AsyncCommand<UserTask>(EditTask);
-            CompleteCommand = new AsyncCommand<UserTask>(CompleteTask);
-            RemoveCommand = new AsyncCommand<UserTask>(RemoveTask);
+            EditCommand = new AsyncCommand<UserTaskModel>(EditTask);
+            CompleteCommand = new AsyncCommand<UserTaskModel>(CompleteTask);
+            RemoveCommand = new AsyncCommand<UserTaskModel>(RemoveTask);
+            CancelEditCommand = new Command(CancelEdit);
         }
 
-        private async Task RemoveTask(object arg)
+        private void CancelEdit()
+        {
+            var taskOnList = TodoTasks.FirstOrDefault(ut => ut.UserTask.Id == editingTask.Id);
+            if (taskOnList != null)
+            {
+                taskOnList.IsEditMode = false;
+            }
+            IsEditMode = false;
+            editingTask = null;
+            NewTaskDescription = "";
+        }
+
+        private async Task RemoveTask(UserTaskModel arg)
         {
             using (var db = new CadastroTarefasContext())
             {
-                if (arg is UserTask task)
-                {
-                    db.UserTasks.Remove(task);
-                    await db.SaveChangesAsync();
-                    await LoadTasks();
-                }
+                db.UserTasks.Remove(arg.UserTask);
+                await db.SaveChangesAsync();
+                await LoadTasks();
             }
         }
 
-        private async Task CompleteTask(object arg)
+        private async Task CompleteTask(UserTaskModel arg)
         {
             using (var db = new CadastroTarefasContext())
             {
-                if (arg is UserTask task)
-                {
-                    task.TaskStatus = DataLayer.TaskStatus.COMPLETED;
-                    db.UserTasks.Update(task);
-                    await db.SaveChangesAsync();
-                    await LoadTasks();
-                }
+                arg.UserTask.TaskStatus = DataLayer.TaskStatus.COMPLETED;
+                db.UserTasks.Update(arg.UserTask);
+                await db.SaveChangesAsync();
+                await LoadTasks();
             }
         }
 
-        private async Task EditTask(UserTask arg)
+        private async Task EditTask(UserTaskModel arg)
         {
-
+            IsEditMode = arg.IsEditMode = true;
+            editingTask = arg.UserTask;
+            NewTaskDescription = arg.UserTask.Description;
         }
 
         private async Task LoadTasks()
@@ -74,10 +103,12 @@ namespace CadastroTarefas.ViewModels
                 TodoTasks.Clear();
                 CompletedTasks.Clear();
 
-                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.TODO).ToList()
-                    .ForEach(t => TodoTasks.Add(t));
-                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED).ToList()
-                    .ForEach(t => CompletedTasks.Add(t));
+                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.TODO)
+                    .OrderByDescending(u => u.Id).ToList()
+                    .ForEach(t => TodoTasks.Add(new UserTaskModel { UserTask = t }));
+                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED)
+                    .OrderByDescending(u => u.Id).ToList()
+                    .ForEach(t => CompletedTasks.Add(new UserTaskModel { UserTask = t }));
             }
         }
 
@@ -87,8 +118,17 @@ namespace CadastroTarefas.ViewModels
             {
                 if (!string.IsNullOrEmpty(NewTaskDescription))
                 {
-                    var task = new UserTask { Description = NewTaskDescription, UserId = App.LoggedUser.Id, TaskStatus = DataLayer.TaskStatus.TODO };
-                    await db.UserTasks.AddAsync(task);
+                    if (IsEditMode && editingTask != null)
+                    {
+                        editingTask.Description = NewTaskDescription;
+                        db.UserTasks.Update(editingTask);
+                    }
+                    else
+                    {
+                        var task = new UserTask { Description = NewTaskDescription, UserId = App.LoggedUser.Id, TaskStatus = DataLayer.TaskStatus.TODO };
+                        await db.UserTasks.AddAsync(task);
+                    }
+
                     await db.SaveChangesAsync();
                     NewTaskDescription = "";
                     await LoadTasks();
