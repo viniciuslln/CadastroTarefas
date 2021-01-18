@@ -52,7 +52,8 @@
                 <TextBox
                     Margin="8"
                     MinLines="5"
-                    Text="{Binding NewTaskDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    Text="{Binding NewTaskDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
                 <Button
                     Margin="8"
                     Command="{Binding SaveTaskCommand}"
