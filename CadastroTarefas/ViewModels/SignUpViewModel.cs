@@ -20,6 +20,7 @@ namespace CadastroTarefas.ViewModels
             get { return username; }
             set { SetProperty(ref username, value); }
         }
+
         private string password;
 
         public string Password
@@ -69,7 +70,6 @@ namespace CadastroTarefas.ViewModels
 
             using (var db = new CadastroTarefasContext())
             {
-
                 if (await db.Users.FirstOrDefaultAsync(u => u.Username == Username) != null)
                 {
                     ErrorMessage = Messages.UserAlreadyRegisteredMessage;
@@ -79,10 +79,9 @@ namespace CadastroTarefas.ViewModels
                 var user = await db.Users.AddAsync(new User { Username = Username, Password = Password });
                 if (await db.SaveChangesAsync() > 0)
                 {
-                    App.LoggedUser = user.Entity; 
+                    App.LoggedUser = user.Entity;
                     NavigateToMainPage();
                 }
-
             }
         }
 

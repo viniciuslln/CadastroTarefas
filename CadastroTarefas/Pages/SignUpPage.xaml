@@ -53,6 +53,5 @@
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
             </StackPanel>
         </Border>
-
     </Grid>
 </Page>
