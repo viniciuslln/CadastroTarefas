@@ -1,8 +1,10 @@
 ﻿using CadastroTarefas.Models;
 using CadastroTarefas.Resources;
 using DataLayer;
+using LiteDB;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -50,9 +52,9 @@ namespace CadastroTarefas.ViewModels
         {
             LoadTasks().SafeFireAndForget();
             SaveTaskCommand = new AsyncCommand(SaveTask);
-            EditCommand = new AsyncCommand<UserTaskModel>(EditTask);
             CompleteCommand = new AsyncCommand<UserTaskModel>(CompleteTask);
             RemoveCommand = new AsyncCommand<UserTaskModel>(RemoveTask);
+            EditCommand = new Command<UserTaskModel>(EditTask);
             CancelEditCommand = new Command(CancelEdit);
         }
 
@@ -70,26 +72,19 @@ namespace CadastroTarefas.ViewModels
 
         private async Task RemoveTask(UserTaskModel arg)
         {
-            using (var db = new CadastroTarefasContext())
-            {
-                db.UserTasks.Remove(arg.UserTask);
-                await db.SaveChangesAsync();
-                await LoadTasks();
-            }
+            await Task.Run(() => App.Database.GetCollection<UserTask>().Delete(arg.UserTask.Id));
+            await LoadTasks();
         }
 
         private async Task CompleteTask(UserTaskModel arg)
         {
-            using (var db = new CadastroTarefasContext())
-            {
-                arg.UserTask.TaskStatus = DataLayer.TaskStatus.COMPLETED;
-                db.UserTasks.Update(arg.UserTask);
-                await db.SaveChangesAsync();
-                await LoadTasks();
-            }
+            arg.UserTask.TaskStatus = DataLayer.TaskStatus.COMPLETED;
+            await Task.Run(() => App.Database.GetCollection<UserTask>().Update(arg.UserTask));
+
+            await LoadTasks();
         }
 
-        private async Task EditTask(UserTaskModel arg)
+        private void EditTask(UserTaskModel arg)
         {
             IsEditMode = arg.IsEditMode = true;
             editingTask = arg.UserTask;
@@ -98,41 +93,52 @@ namespace CadastroTarefas.ViewModels
 
         private async Task LoadTasks()
         {
-            using (var db = new CadastroTarefasContext())
-            {
-                TodoTasks.Clear();
-                CompletedTasks.Clear();
+            TodoTasks.Clear();
+            CompletedTasks.Clear();
 
-                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.TODO)
-                    .OrderByDescending(u => u.Id).ToList()
-                    .ForEach(t => TodoTasks.Add(new UserTaskModel { UserTask = t }));
-                db.UserTasks.Where(ut => ut.UserId == App.LoggedUser.Id && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED)
-                    .OrderByDescending(u => u.Id).ToList()
-                    .ForEach(t => CompletedTasks.Add(new UserTaskModel { UserTask = t }));
-            }
+            var todoTasks = await GetTodoTasks(App.Database, App.LoggedUser.Id);
+            var completedTasks = await GetCompletedTasks(App.Database, App.LoggedUser.Id);
+
+            todoTasks.ForEach(t => TodoTasks.Add(new UserTaskModel { UserTask = t }));
+            completedTasks.ForEach(t => CompletedTasks.Add(new UserTaskModel { UserTask = t }));
+        }
+
+        private Task<List<UserTask>> GetTodoTasks(LiteDatabase db, int userId)
+        {
+            return Task.Run(() =>
+                     db.GetCollection<UserTask>()
+                        .Find(ut => ut.UserId == userId && ut.TaskStatus == DataLayer.TaskStatus.TODO)
+                        .OrderByDescending(u => u.Id)
+                        .ToList());
+        }
+
+        private Task<List<UserTask>> GetCompletedTasks(LiteDatabase db, int userId)
+        {
+            return Task.Run(() =>
+                     db.GetCollection<UserTask>()
+                        .Find(ut => ut.UserId == userId && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED)
+                        .OrderByDescending(u => u.Id)
+                        .ToList());
         }
 
         private async Task SaveTask()
         {
-            using (var db = new CadastroTarefasContext())
+            if (!string.IsNullOrEmpty(NewTaskDescription))
             {
-                if (!string.IsNullOrEmpty(NewTaskDescription))
+                if (IsEditMode && editingTask != null)
                 {
-                    if (IsEditMode && editingTask != null)
-                    {
-                        editingTask.Description = NewTaskDescription;
-                        db.UserTasks.Update(editingTask);
-                    }
-                    else
-                    {
-                        var task = new UserTask { Description = NewTaskDescription, UserId = App.LoggedUser.Id, TaskStatus = DataLayer.TaskStatus.TODO };
-                        await db.UserTasks.AddAsync(task);
-                    }
-
-                    await db.SaveChangesAsync();
-                    NewTaskDescription = "";
-                    await LoadTasks();
+                    editingTask.Description = NewTaskDescription;
+                    await Task.Run(() => App.Database.GetCollection<UserTask>().Update(editingTask));
+                    CancelEdit();
                 }
+                else
+                {
+                    var task = new UserTask { Description = NewTaskDescription, UserId = App.LoggedUser.Id, TaskStatus = DataLayer.TaskStatus.TODO };
+                    await Task.Run(() => App.Database.GetCollection<UserTask>().Insert(task));
+                }
+
+                NewTaskDescription = "";
+                await LoadTasks();
             }
         }
     }

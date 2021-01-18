@@ -1,6 +1,5 @@
 ﻿using CadastroTarefas.Resources;
 using DataLayer;
-using Microsoft.EntityFrameworkCore;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
 using System;
@@ -74,19 +73,16 @@ namespace CadastroTarefas.ViewModels
                 return;
             }
 
-            using (var db = new CadastroTarefasContext())
+            var encripitedPassword = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.Default.GetBytes(plainPassword));
+            var user = await Task.Run(() => App.Database.GetCollection<User>().FindOne(u => u.Username == Username && u.Password == Encoding.Default.GetString(encripitedPassword)));
+            if (user != null)
             {
-                var encripitedPassword = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.Default.GetBytes(plainPassword));
-                var user = await db.Users.FirstOrDefaultAsync(u => u.Username == Username && u.Password == Encoding.Default.GetString(encripitedPassword));
-                if (user != null)
-                {
-                    App.LoggedUser = user;
-                    NavigateToMainPage();
-                }
-                else
-                {
-                    ErrorMessage = Messages.UserPasswordWrongMessage;
-                }
+                App.LoggedUser = user;
+                NavigateToMainPage();
+            }
+            else
+            {
+                ErrorMessage = Messages.UserPasswordWrongMessage;
             }
         }
 

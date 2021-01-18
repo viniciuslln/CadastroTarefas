@@ -78,10 +78,21 @@
                     Background="#6CC235"
                     Command="{Binding SignUpCommand}"
                     Content="Entrar com usuário existente" />
-                <TextBlock
-                    Foreground="Red"
-                    Text="{Binding ErrorMessage}"
-                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
+                <Border
+                    Margin="32,0,32,32"
+                    Background="#20F95346"
+                    BorderBrush="#F95346"
+                    BorderThickness="1"
+                    CornerRadius="3"
+                    Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}">
+                    <TextBlock
+                        Margin="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        Foreground="#F95346"
+                        Text="{Binding ErrorMessage}" />
+                </Border>
             </StackPanel>
         </Border>
     </Border>

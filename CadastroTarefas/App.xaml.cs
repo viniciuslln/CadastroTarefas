@@ -1,5 +1,4 @@
 ﻿using DataLayer;
-using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
 namespace CadastroTarefas
@@ -10,15 +9,19 @@ namespace CadastroTarefas
     public partial class App : Application
     {
         public static User LoggedUser { get; set; }
+        public static LiteDB.LiteDatabase Database { get; private set; }
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            using (var db = new CadastroTarefasContext())
-            {
-                db.Database.EnsureCreated();
-                db.Database.Migrate();
-            }
             base.OnStartup(e);
+
+            Database = new LiteDB.LiteDatabase("Filename=appDatabase.db;Connection=shared");
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            Database.Dispose();
         }
     }
 }

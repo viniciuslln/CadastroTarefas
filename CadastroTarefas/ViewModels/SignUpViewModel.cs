@@ -1,6 +1,5 @@
 ﻿using CadastroTarefas.Resources;
 using DataLayer;
-using Microsoft.EntityFrameworkCore;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
 using System;
@@ -73,21 +72,20 @@ namespace CadastroTarefas.ViewModels
                 return;
             }
 
-            using (var db = new CadastroTarefasContext())
+            var registeredUser = await Task.Run(() => App.Database.GetCollection<User>().FindOne(u => u.Username == Username));
+            if (registeredUser != null)
             {
-                if (await db.Users.FirstOrDefaultAsync(u => u.Username == Username) != null)
-                {
-                    ErrorMessage = Messages.UserAlreadyRegisteredMessage;
-                    return;
-                }
+                ErrorMessage = Messages.UserAlreadyRegisteredMessage;
+                return;
+            }
 
-                var encripitedPassword = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.Default.GetBytes(plainPassword));
-                var user = await db.Users.AddAsync(new User { Username = Username, Password = Encoding.Default.GetString(encripitedPassword) });
-                if (await db.SaveChangesAsync() > 0)
-                {
-                    App.LoggedUser = user.Entity;
-                    NavigateToMainPage();
-                }
+            var encripitedPassword = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.Default.GetBytes(plainPassword));
+            var user = new User { Username = Username, Password = Encoding.Default.GetString(encripitedPassword) };
+            var userId = await Task.Run(() => App.Database.GetCollection<User>().Insert(user));
+            if (userId > 0)
+            {
+                App.LoggedUser = user;
+                NavigateToMainPage();
             }
         }
 
