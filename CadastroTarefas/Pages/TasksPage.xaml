@@ -49,8 +49,14 @@
                     FontSize="30"
                     Text="{x:Static resx:PagesText.NewTasks}" />
                 <Label Margin="8" Content="descrição da tarefa" />
-                <TextBox Margin="8" MinLines="5" />
-                <Button Margin="8" Content="adicionar tarefa" />
+                <TextBox
+                    Margin="8"
+                    MinLines="5"
+                    Text="{Binding NewTaskDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button
+                    Margin="8"
+                    Command="{Binding SaveTaskCommand}"
+                    Content="adicionar tarefa" />
             </StackPanel>
         </Border>
 

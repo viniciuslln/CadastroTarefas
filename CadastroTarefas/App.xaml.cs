@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using Microsoft.EntityFrameworkCore;
 using System.Windows;
 
 namespace CadastroTarefas
@@ -13,6 +14,7 @@ namespace CadastroTarefas
             using (var db = new CadastroTarefasContext())
             {
                 db.Database.EnsureCreated();
+                db.Database.Migrate();
             }
             base.OnStartup(e);
         }
