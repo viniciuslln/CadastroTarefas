@@ -8,6 +8,7 @@
     Title="MainWindow"
     Width="800"
     Height="450"
+    Background="#013E74"
     ShowsNavigationUI="False"
     Source="Pages/LoginPage.xaml"
     mc:Ignorable="d" />

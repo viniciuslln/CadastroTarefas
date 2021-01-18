@@ -9,16 +9,16 @@ namespace CadastroTarefas.Models
 
         public UserTask UserTask
         {
-            get { return userTask; }
-            set { SetProperty(ref userTask, value); }
+            get => userTask;
+            set => SetProperty(ref userTask, value);
         }
 
         private bool isEditMode = false;
 
         public bool IsEditMode
         {
-            get { return isEditMode; }
-            set { SetProperty(ref isEditMode, value); }
+            get => isEditMode;
+            set => SetProperty(ref isEditMode, value);
         }
     }
 }

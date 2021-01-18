@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -17,24 +18,28 @@ namespace CadastroTarefas.ViewModels
 
         public string Username
         {
-            get { return username; }
-            set { SetProperty(ref username, value); }
+            get => username;
+            set => SetProperty(ref username, value);
         }
 
-        private string password;
+        private string plainPassword = string.Empty;
 
         public string Password
         {
-            get { return password; }
-            set { SetProperty(ref password, value); }
+            set
+            {
+                plainPassword = value;
+                OnPropertyChanged("Password");
+            }
+            get => new String('●', plainPassword.Length);
         }
 
         private string errorMessage;
 
         public string ErrorMessage
         {
-            get { return errorMessage; }
-            set { SetProperty(ref errorMessage, value); }
+            get => errorMessage;
+            set => SetProperty(ref errorMessage, value);
         }
 
         public ICommand LoginCommand { get; private set; }
@@ -62,7 +67,7 @@ namespace CadastroTarefas.ViewModels
                 return;
             }
 
-            if (string.IsNullOrEmpty(Password))
+            if (string.IsNullOrEmpty(plainPassword))
             {
                 ErrorMessage = Messages.PasswordEmptyMessage;
                 return;
@@ -76,7 +81,8 @@ namespace CadastroTarefas.ViewModels
                     return;
                 }
 
-                var user = await db.Users.AddAsync(new User { Username = Username, Password = Password });
+                var encripitedPassword = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.Default.GetBytes(plainPassword));
+                var user = await db.Users.AddAsync(new User { Username = Username, Password = Encoding.Default.GetString(encripitedPassword) });
                 if (await db.SaveChangesAsync() > 0)
                 {
                     App.LoggedUser = user.Entity;

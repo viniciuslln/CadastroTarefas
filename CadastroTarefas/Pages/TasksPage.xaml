@@ -1,10 +1,10 @@
 ﻿<Page
     x:Class="CadastroTarefas.Pages.TasksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:li="clr-namespace:CadastroTarefas.ListItens"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resx="clr-namespace:CadastroTarefas.Resources"
     Title="TasksPage"
     d:DesignHeight="450"
@@ -16,9 +16,30 @@
             <Style TargetType="Grid">
                 <Style.Resources>
                     <Style TargetType="Border">
+                        <Setter Property="Background" Value="#F5FAFE" />
                         <Setter Property="BorderBrush" Value="Gray" />
-                        <Setter Property="BorderThickness" Value="5" />
+                        <Setter Property="BorderThickness" Value="3" />
                         <Setter Property="CornerRadius" Value="5" />
+                    </Style>
+                </Style.Resources>
+            </Style>
+
+            <Style x:Key="SectionTitle" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                <Setter Property="Background" Value="#0166C0" />
+                <Setter Property="FontSize" Value="30" />
+                <Setter Property="Padding" Value="24" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="TextAlignment" Value="Center" />
+            </Style>
+
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="Foreground" Value="White" />
+                <Style.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="4" />
                     </Style>
                 </Style.Resources>
             </Style>
@@ -51,26 +72,26 @@
             VerticalAlignment="top">
             <StackPanel Orientation="Vertical">
 
-                <TextBlock
-                    Margin="8"
-                    HorizontalAlignment="Center"
-                    FontSize="30"
-                    Text="{Binding TaskEditionTitle, FallbackValue='{x:Static resx:PagesText.NewTasks}'}" />
-                <Label Margin="8" Content="descrição da tarefa" />
+                <TextBlock Style="{StaticResource SectionTitle}" Text="{Binding TaskEditionTitle, FallbackValue='{x:Static resx:PagesText.NewTasks}'}" />
+
+                <Label Margin="32,32,32,0" Content="descrição da tarefa" />
 
                 <TextBox
-                    Margin="8"
+                    Margin="32,0,32,32"
+                    Padding="16"
+                    FontSize="18"
                     MinLines="5"
                     Text="{Binding NewTaskDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="Wrap" />
 
                 <Button
-                    Margin="8"
+                    Margin="32,0,32,32"
+                    Background="#0187FF"
                     Command="{Binding SaveTaskCommand}"
                     Content="adicionar tarefa"
                     Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter={StaticResource True}}" />
 
-                <Grid Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid Margin="32,0,32,32" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -78,12 +99,12 @@
 
                     <Button
                         Grid.Column="0"
-                        Margin="8"
+                        Background="#F95346"
                         Command="{Binding CancelEditCommand}"
                         Content="cancelar" />
                     <Button
                         Grid.Column="1"
-                        Margin="8"
+                        Background="#0187FF"
                         Command="{Binding SaveTaskCommand}"
                         Content="salvar" />
                 </Grid>
@@ -99,9 +120,7 @@
 
                 <TextBlock
                     Grid.Row="0"
-                    Margin="8"
-                    HorizontalAlignment="Center"
-                    FontSize="30"
+                    Style="{StaticResource SectionTitle}"
                     Text="{x:Static resx:PagesText.TodoTasks}" />
                 <ListView
                     Grid.Row="1"
@@ -124,9 +143,7 @@
 
                 <TextBlock
                     Grid.Row="0"
-                    Margin="8"
-                    HorizontalAlignment="Center"
-                    FontSize="30"
+                    Style="{StaticResource SectionTitle}"
                     Text="{x:Static resx:PagesText.DoneTasks}" />
                 <ListView
                     Grid.Row="1"

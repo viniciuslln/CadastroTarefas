@@ -17,24 +17,24 @@ namespace CadastroTarefas.ViewModels
 
         public string TaskEditionTitle
         {
-            get { return taskEditionTitle; }
-            set { SetProperty(ref taskEditionTitle, value); }
+            get => taskEditionTitle;
+            set => SetProperty(ref taskEditionTitle, value);
         }
 
         private bool isEditMode = false;
 
         public bool IsEditMode
         {
-            get { return isEditMode; }
-            set { SetProperty(ref isEditMode, value); }
+            get => isEditMode;
+            set => SetProperty(ref isEditMode, value);
         }
 
         private string newTaskDescription;
 
         public string NewTaskDescription
         {
-            get { return newTaskDescription; }
-            set { SetProperty(ref newTaskDescription, value); }
+            get => newTaskDescription;
+            set => SetProperty(ref newTaskDescription, value);
         }
 
         public ObservableRangeCollection<UserTaskModel> TodoTasks { get; set; } = new ObservableRangeCollection<UserTaskModel>();

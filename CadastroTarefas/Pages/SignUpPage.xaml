@@ -14,26 +14,49 @@
             <Style TargetType="StackPanel">
                 <Style.Resources>
                     <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="0,16,0,0" />
+                        <Setter Property="Margin" Value="32,0" />
+                        <Setter Property="FontSize" Value="18" />
+                        <Setter Property="Padding" Value="16" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="4" />
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+                    <Style TargetType="{x:Type TextBox}">
+                        <Setter Property="Margin" Value="32,0,32,0" />
+                        <Setter Property="FontSize" Value="26" />
+                        <Setter Property="Padding" Value="8" />
+                        <Style.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="4" />
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+                    <Style TargetType="{x:Type Label}">
+                        <Setter Property="Margin" Value="32,16,32,0" />
                     </Style>
                 </Style.Resources>
             </Style>
         </ResourceDictionary>
     </Page.Resources>
-    <Grid>
+    <Border Padding="46">
         <Border
-            Padding="50"
+            MinWidth="500"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            BorderBrush="Gray"
+            Background="#F5FAFE"
             BorderThickness="5"
-            CornerRadius="4">
+            CornerRadius="8">
             <StackPanel VerticalAlignment="Stretch" Orientation="Vertical">
 
                 <TextBlock
-                    Margin="20"
-                    FontSize="75"
-                    Text="Cadastrar">
+                    Padding="20"
+                    Background="#0166C0"
+                    FontSize="40"
+                    Text="Cadastrar"
+                    TextAlignment="Center">
                     <TextBlock.Foreground>
                         <LinearGradientBrush>
                             <GradientStop Color="#DCE35B" />
@@ -45,13 +68,21 @@
                 <TextBox Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <Label Content="informe a senha" />
                 <TextBox Text="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Command="{Binding LoginCommand}" Content="Criar novo usuário" />
-                <Button Command="{Binding SignUpCommand}" Content="Entrar com usuário existente" />
+                <Button
+                    Margin="32,32,32,16"
+                    Background="#0187FF"
+                    Command="{Binding LoginCommand}"
+                    Content="Criar novo usuário" />
+                <Button
+                    Margin="32,0,32,32"
+                    Background="#6CC235"
+                    Command="{Binding SignUpCommand}"
+                    Content="Entrar com usuário existente" />
                 <TextBlock
                     Foreground="Red"
                     Text="{Binding ErrorMessage}"
                     Visibility="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyToVisibilityConverter}}" />
             </StackPanel>
         </Border>
-    </Grid>
+    </Border>
 </Page>
