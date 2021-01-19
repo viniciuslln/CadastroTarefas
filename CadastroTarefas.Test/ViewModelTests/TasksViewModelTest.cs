@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace UnitTestProject1.ViewModelTests
+namespace CadastroTarefas.Test.ViewModelTests
 {
     [TestClass]
     public class TasksViewModelTest

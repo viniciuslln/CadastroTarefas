@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadastroTarefas", "CadastroTarefas\CadastroTarefas.csproj", "{BFF999F2-E44C-48AB-BAA7-DE7C0424594C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CadastroTarefas.DataLayer", "DataLayer\CadastroTarefas.DataLayer.csproj", "{2390D66F-69A3-4F22-8513-9D8DAAE4A989}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CadastroTarefas.DataLayer", "CadastroTarefas.DataLayer\CadastroTarefas.DataLayer.csproj", "{2390D66F-69A3-4F22-8513-9D8DAAE4A989}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadastroTarefas.Test", "UnitTestProject1\CadastroTarefas.Test.csproj", "{C9227CAC-1AD9-4DB0-94A6-08B82562EA43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadastroTarefas.Test", "CadastroTarefas.Test\CadastroTarefas.Test.csproj", "{C9227CAC-1AD9-4DB0-94A6-08B82562EA43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

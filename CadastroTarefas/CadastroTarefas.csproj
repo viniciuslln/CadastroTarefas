@@ -168,7 +168,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\DataLayer\CadastroTarefas.DataLayer.csproj">
+    <ProjectReference Include="..\CadastroTarefas.DataLayer\CadastroTarefas.DataLayer.csproj">
       <Project>{2390d66f-69a3-4f22-8513-9d8daae4a989}</Project>
       <Name>CadastroTarefas.DataLayer</Name>
     </ProjectReference>

@@ -8,8 +8,8 @@
     <ProjectGuid>{C9227CAC-1AD9-4DB0-94A6-08B82562EA43}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UnitTestProject1</RootNamespace>
-    <AssemblyName>UnitTestProject1</AssemblyName>
+    <RootNamespace>CadastroTarefas.Test</RootNamespace>
+    <AssemblyName>CadastroTarefas.Test</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -85,7 +85,7 @@
       <Project>{bff999f2-e44c-48ab-baa7-de7c0424594c}</Project>
       <Name>CadastroTarefas</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DataLayer\CadastroTarefas.DataLayer.csproj">
+    <ProjectReference Include="..\CadastroTarefas.DataLayer\CadastroTarefas.DataLayer.csproj">
       <Project>{2390D66F-69A3-4F22-8513-9D8DAAE4A989}</Project>
       <Name>CadastroTarefas.DataLayer</Name>
     </ProjectReference>

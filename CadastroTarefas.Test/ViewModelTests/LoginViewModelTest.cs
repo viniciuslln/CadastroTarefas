@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace UnitTestProject1.ViewModelTests
+namespace CadastroTarefas.Test.ViewModelTests
 {
 
     [TestClass]
