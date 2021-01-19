@@ -36,7 +36,7 @@
             Grid.Column="2"
             Padding="8"
             Background="#F95346"
-            Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+            Command="{Binding DataContext.RemoveCompletedCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
             CommandParameter="{Binding .}"
             Content="Remover" />
     </Grid>

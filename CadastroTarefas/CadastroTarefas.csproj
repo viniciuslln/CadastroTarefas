@@ -73,6 +73,7 @@
     <Compile Include="ListItens\TodoTaskItem.xaml.cs">
       <DependentUpon>TodoTaskItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\UserTaskModel.cs" />
     <Compile Include="Resources\Messages.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -1,9 +1,9 @@
-﻿using CadastroTarefas.Resources;
+﻿using CadastroTarefas.Models;
+using CadastroTarefas.Resources;
 using DataLayer;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -13,39 +13,17 @@ namespace CadastroTarefas.ViewModels
 {
     public class SignUpViewModel : BaseViewModel
     {
-        private string username;
+        private readonly UserRepository _userRepository;
 
-        public string Username
-        {
-            get => username;
-            set => SetProperty(ref username, value);
-        }
+        public LoginModel LoginModel { get; set; }
 
-        private string plainPassword = string.Empty;
-
-        public string Password
-        {
-            set
-            {
-                plainPassword = value;
-                OnPropertyChanged("Password");
-            }
-            get => new String('●', plainPassword.Length);
-        }
-
-        private string errorMessage;
-
-        public string ErrorMessage
-        {
-            get => errorMessage;
-            set => SetProperty(ref errorMessage, value);
-        }
-
-        public ICommand LoginCommand { get; private set; }
-        public ICommand SignUpCommand { get; private set; }
+        public ICommand LoginCommand { get; }
+        public ICommand SignUpCommand { get; }
 
         public SignUpViewModel()
         {
+            _userRepository = new UserRepository(App.Database);
+            LoginModel = new LoginModel();
             LoginCommand = new AsyncCommand(DoSignUp);
             SignUpCommand = new Command(GoToSignUp);
         }
@@ -57,46 +35,36 @@ namespace CadastroTarefas.ViewModels
 
         private async Task DoSignUp()
         {
-            IsBusy = true;
-            ErrorMessage = "";
-
-            if (string.IsNullOrEmpty(Username))
+            if (!LoginModel.Validate())
             {
-                ErrorMessage = Messages.UsernameEmptyMessage;
                 return;
             }
 
-            if (string.IsNullOrEmpty(plainPassword))
-            {
-                ErrorMessage = Messages.PasswordEmptyMessage;
-                return;
-            }
-
-            var registeredUser = await Task.Run(() => App.Database.GetCollection<User>().FindOne(u => u.Username == Username));
+            var registeredUser = await _userRepository.SearchRegisteredUser(LoginModel.Username);
             if (registeredUser != null)
             {
-                ErrorMessage = Messages.UserAlreadyRegisteredMessage;
+                LoginModel.ErrorMessage = Messages.UserAlreadyRegisteredMessage;
                 return;
             }
 
-            var encripitedPassword = System.Security.Cryptography.SHA1.Create().ComputeHash(Encoding.Default.GetBytes(plainPassword));
-            var user = new User { Username = Username, Password = Encoding.Default.GetString(encripitedPassword) };
-            var userId = await Task.Run(() => App.Database.GetCollection<User>().Insert(user));
-            if (userId > 0)
+            var userSaved = await _userRepository.SaveNewUser(LoginModel.Username, LoginModel.PlainPassword);
+
+            if (userSaved.Id > 0)
             {
-                App.LoggedUser = user;
+                App.LoggedUser = userSaved;
                 NavigateToMainPage();
             }
         }
 
+
         private void NavigateToMainPage()
         {
-            (Application.Current.MainWindow as NavigationWindow).NavigationService.Navigate(new Uri("Pages/TasksPage.xaml", UriKind.Relative));
+            (Application.Current.MainWindow as NavigationWindow)?.NavigationService?.Navigate(new Uri("Pages/TasksPage.xaml", UriKind.Relative));
         }
 
         private void NavigateToSignUpPage()
         {
-            (Application.Current.MainWindow as NavigationWindow).NavigationService.GoBack();
+            (Application.Current.MainWindow as NavigationWindow)?.NavigationService?.GoBack();
         }
     }
 }

@@ -25,7 +25,8 @@
         <TextBlock
             Grid.Row="0"
             Grid.ColumnSpan="3"
-          Margin="0,0,0,16"       Padding="16"
+            Margin="0,0,0,16"
+            Padding="16"
             FontSize="18"
             TextWrapping="Wrap">
             <Run Text="{Binding UserTask.Description, FallbackValue=None}" />
@@ -52,7 +53,7 @@
             Grid.Column="2"
             Padding="8"
             Background="#F95346"
-            Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
+            Command="{Binding DataContext.RemoveTodoCommand, RelativeSource={RelativeSource AncestorType=ListView}}"
             CommandParameter="{Binding .}"
             Content="Remover" />
 

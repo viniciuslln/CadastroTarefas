@@ -4,7 +4,6 @@ using DataLayer;
 using LiteDB;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -13,6 +12,7 @@ namespace CadastroTarefas.ViewModels
 {
     public class TasksViewModel : BaseViewModel
     {
+        private readonly UserTaskRepository _userTaskRepository;
         private UserTask editingTask = null;
 
         private string taskEditionTitle = PagesText.NewTasks;
@@ -45,17 +45,24 @@ namespace CadastroTarefas.ViewModels
         public ICommand SaveTaskCommand { get; set; }
         public ICommand EditCommand { get; set; }
         public ICommand CompleteCommand { get; set; }
-        public ICommand RemoveCommand { get; set; }
+        public ICommand RemoveTodoCommand { get; set; }
+        public ICommand RemoveCompletedCommand { get; set; }
         public ICommand CancelEditCommand { get; set; }
+
+        public LoginModel LoginModel { get; }
 
         public TasksViewModel()
         {
-            LoadTasks().SafeFireAndForget();
+            _userTaskRepository = new UserTaskRepository(App.Database);
+            LoginModel = new LoginModel();
             SaveTaskCommand = new AsyncCommand(SaveTask);
             CompleteCommand = new AsyncCommand<UserTaskModel>(CompleteTask);
-            RemoveCommand = new AsyncCommand<UserTaskModel>(RemoveTask);
-            EditCommand = new Command<UserTaskModel>(EditTask);
+            RemoveTodoCommand = new AsyncCommand<UserTaskModel>(RemoveTodoTask);
+            RemoveCompletedCommand = new AsyncCommand<UserTaskModel>(RemoveCompletedTask);
+            EditCommand = new Command<UserTaskModel>(EnterEditMode);
             CancelEditCommand = new Command(CancelEdit);
+
+            LoadTasks().SafeFireAndForget();
         }
 
         private void CancelEdit()
@@ -70,21 +77,25 @@ namespace CadastroTarefas.ViewModels
             NewTaskDescription = "";
         }
 
-        private async Task RemoveTask(UserTaskModel arg)
+        private async Task RemoveTodoTask(UserTaskModel arg)
         {
             await Task.Run(() => App.Database.GetCollection<UserTask>().Delete(arg.UserTask.Id));
-            await LoadTasks();
+            await LoadTodoTasks();
+        }
+
+        private async Task RemoveCompletedTask(UserTaskModel arg)
+        {
+            await _userTaskRepository.RemoveTask(arg.UserTask.Id);
+            await LoadCompletedTasks();
         }
 
         private async Task CompleteTask(UserTaskModel arg)
         {
-            arg.UserTask.TaskStatus = DataLayer.TaskStatus.COMPLETED;
-            await Task.Run(() => App.Database.GetCollection<UserTask>().Update(arg.UserTask));
-
+            await _userTaskRepository.SaveTaskAsCompleted(arg.UserTask);
             await LoadTasks();
         }
 
-        private void EditTask(UserTaskModel arg)
+        private void EnterEditMode(UserTaskModel arg)
         {
             IsEditMode = arg.IsEditMode = true;
             editingTask = arg.UserTask;
@@ -93,53 +104,42 @@ namespace CadastroTarefas.ViewModels
 
         private async Task LoadTasks()
         {
+            await LoadTodoTasks();
+            await LoadCompletedTasks();
+        }
+
+        private async Task LoadTodoTasks()
+        {
             TodoTasks.Clear();
-            CompletedTasks.Clear();
-
-            var todoTasks = await GetTodoTasks(App.Database, App.LoggedUser.Id);
-            var completedTasks = await GetCompletedTasks(App.Database, App.LoggedUser.Id);
-
+            var todoTasks = await _userTaskRepository.GetTodoTasks(App.LoggedUser.Id);
             todoTasks.ForEach(t => TodoTasks.Add(new UserTaskModel { UserTask = t }));
+        }
+
+        private async Task LoadCompletedTasks()
+        {
+            CompletedTasks.Clear();
+            var completedTasks = await _userTaskRepository.GetCompletedTasks(App.LoggedUser.Id);
             completedTasks.ForEach(t => CompletedTasks.Add(new UserTaskModel { UserTask = t }));
-        }
-
-        private Task<List<UserTask>> GetTodoTasks(LiteDatabase db, int userId)
-        {
-            return Task.Run(() =>
-                     db.GetCollection<UserTask>()
-                        .Find(ut => ut.UserId == userId && ut.TaskStatus == DataLayer.TaskStatus.TODO)
-                        .OrderByDescending(u => u.Id)
-                        .ToList());
-        }
-
-        private Task<List<UserTask>> GetCompletedTasks(LiteDatabase db, int userId)
-        {
-            return Task.Run(() =>
-                     db.GetCollection<UserTask>()
-                        .Find(ut => ut.UserId == userId && ut.TaskStatus == DataLayer.TaskStatus.COMPLETED)
-                        .OrderByDescending(u => u.Id)
-                        .ToList());
         }
 
         private async Task SaveTask()
         {
             if (!string.IsNullOrEmpty(NewTaskDescription))
             {
-                if (IsEditMode && editingTask != null)
+                if (IsEditMode)
                 {
-                    editingTask.Description = NewTaskDescription;
-                    await Task.Run(() => App.Database.GetCollection<UserTask>().Update(editingTask));
+                    await _userTaskRepository.SaveEditTask(editingTask, NewTaskDescription);
                     CancelEdit();
                 }
                 else
                 {
-                    var task = new UserTask { Description = NewTaskDescription, UserId = App.LoggedUser.Id, TaskStatus = DataLayer.TaskStatus.TODO };
-                    await Task.Run(() => App.Database.GetCollection<UserTask>().Insert(task));
+                    await _userTaskRepository.SaveNewTask(NewTaskDescription, App.LoggedUser.Id);
                 }
 
                 NewTaskDescription = "";
-                await LoadTasks();
+                await LoadTodoTasks();
             }
         }
+
     }
 }
