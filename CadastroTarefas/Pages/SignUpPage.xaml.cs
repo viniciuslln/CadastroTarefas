@@ -1,4 +1,5 @@
 ﻿using CadastroTarefas.ViewModels;
+using DataLayer;
 using System.Windows.Controls;
 
 namespace CadastroTarefas.Pages
@@ -11,7 +12,7 @@ namespace CadastroTarefas.Pages
         public SignUpPage()
         {
             InitializeComponent();
-            DataContext = new SignUpViewModel();
+            DataContext = new SignUpViewModel(App.LoggedUserService, new UserRepository(App.Database));
         }
     }
 }

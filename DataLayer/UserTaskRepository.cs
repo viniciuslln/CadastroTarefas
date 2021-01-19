@@ -53,10 +53,11 @@ namespace CadastroTarefas
             }
         }
 
-        public async Task SaveNewTask(string description, int userId)
+        public async Task<UserTask> SaveNewTask(string description, int userId)
         {
             var task = new UserTask { Description = description, UserId = userId, TaskStatus = DataLayer.TaskStatus.TODO };
             await Task.Run(() => _db.GetCollection<UserTask>().Insert(task));
+            return task;
         }
 
     }

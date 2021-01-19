@@ -1,9 +1,9 @@
 ﻿using CadastroTarefas.Models;
 using CadastroTarefas.Resources;
+using CadastroTarefas.Services;
 using DataLayer;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -14,15 +14,16 @@ namespace CadastroTarefas.ViewModels
     public class SignUpViewModel : BaseViewModel
     {
         private readonly UserRepository _userRepository;
-
+        private readonly LoggedUserService _loggedUserService;
         public LoginModel LoginModel { get; set; }
 
         public ICommand LoginCommand { get; }
         public ICommand SignUpCommand { get; }
 
-        public SignUpViewModel()
+        public SignUpViewModel(LoggedUserService loggedUserService, UserRepository userRepository)
         {
-            _userRepository = new UserRepository(App.Database);
+            _loggedUserService = loggedUserService;
+            _userRepository = userRepository;
             LoginModel = new LoginModel();
             LoginCommand = new AsyncCommand(DoSignUp);
             SignUpCommand = new Command(GoToSignUp);
@@ -33,7 +34,7 @@ namespace CadastroTarefas.ViewModels
             NavigateToSignUpPage();
         }
 
-        private async Task DoSignUp()
+        public async Task DoSignUp()
         {
             if (!LoginModel.Validate())
             {
@@ -51,15 +52,8 @@ namespace CadastroTarefas.ViewModels
 
             if (userSaved.Id > 0)
             {
-                App.LoggedUser = userSaved;
-                NavigateToMainPage();
+                _loggedUserService.LoggedUser = userSaved;
             }
-        }
-
-
-        private void NavigateToMainPage()
-        {
-            (Application.Current.MainWindow as NavigationWindow)?.NavigationService?.Navigate(new Uri("Pages/TasksPage.xaml", UriKind.Relative));
         }
 
         private void NavigateToSignUpPage()

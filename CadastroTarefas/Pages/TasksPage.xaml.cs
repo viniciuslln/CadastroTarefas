@@ -1,4 +1,5 @@
 ﻿using CadastroTarefas.ViewModels;
+using MvvmHelpers;
 using System.Windows.Controls;
 
 namespace CadastroTarefas.Pages
@@ -8,10 +9,17 @@ namespace CadastroTarefas.Pages
     /// </summary>
     public partial class TasksPage : Page
     {
+        private readonly TasksViewModel vm;
+
         public TasksPage()
         {
+            DataContext = vm = new TasksViewModel(App.LoggedUserService, new UserTaskRepository(App.Database));
             InitializeComponent();
-            DataContext = new TasksViewModel();
+        }
+
+        private void Page_Initialized(object sender, System.EventArgs e)
+        {
+            vm.LoadTasks().SafeFireAndForget();
         }
     }
 }

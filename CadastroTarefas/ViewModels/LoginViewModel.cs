@@ -1,5 +1,6 @@
 ﻿using CadastroTarefas.Models;
 using CadastroTarefas.Resources;
+using CadastroTarefas.Services;
 using DataLayer;
 using MvvmHelpers;
 using MvvmHelpers.Commands;
@@ -14,6 +15,7 @@ namespace CadastroTarefas.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         private readonly UserRepository _userRepository;
+        private readonly LoggedUserService _loggedUserService;
 
         public LoginModel LoginModel { get; set; }
 
@@ -21,9 +23,10 @@ namespace CadastroTarefas.ViewModels
 
         public ICommand SignUpCommand { get; }
 
-        public LoginViewModel()
+        public LoginViewModel(LoggedUserService loggedUserService, UserRepository userRepository)
         {
-            _userRepository = new UserRepository(App.Database);
+            _loggedUserService = loggedUserService;
+            _userRepository = userRepository;
             LoginModel = new LoginModel();
             LoginCommand = new AsyncCommand(DoLogin);
             SignUpCommand = new Command(GoToSignUp);
@@ -34,7 +37,7 @@ namespace CadastroTarefas.ViewModels
             NavigateToSignUpPage();
         }
 
-        private async Task DoLogin()
+        public async Task DoLogin()
         {
             if (!LoginModel.Validate())
             {
@@ -44,8 +47,7 @@ namespace CadastroTarefas.ViewModels
             var user = await _userRepository.GetRegisteredUser(LoginModel.Username, LoginModel.PlainPassword);
             if (user != null)
             {
-                App.LoggedUser = user;
-                NavigateToMainPage();
+                _loggedUserService.LoggedUser = user;
             }
             else
             {
@@ -53,14 +55,9 @@ namespace CadastroTarefas.ViewModels
             }
         }
 
-        private void NavigateToMainPage()
-        {
-            (Application.Current.MainWindow as NavigationWindow)?.NavigationService.Navigate(new Uri("Pages/TasksPage.xaml", UriKind.Relative));
-        }
-
         private void NavigateToSignUpPage()
         {
-            (Application.Current.MainWindow as NavigationWindow)?.NavigationService.Navigate(new Uri("Pages/SignUpPage.xaml", UriKind.Relative));
+            (Application.Current.MainWindow as NavigationWindow)?.NavigationService?.Navigate(new Uri("Pages/SignUpPage.xaml", UriKind.Relative));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using CadastroTarefas.Resources;
 using MvvmHelpers;
-using System;
 
 namespace CadastroTarefas.Models
 {

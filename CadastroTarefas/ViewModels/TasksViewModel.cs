@@ -1,5 +1,6 @@
 ﻿using CadastroTarefas.Models;
 using CadastroTarefas.Resources;
+using CadastroTarefas.Services;
 using DataLayer;
 using LiteDB;
 using MvvmHelpers;
@@ -12,6 +13,7 @@ namespace CadastroTarefas.ViewModels
 {
     public class TasksViewModel : BaseViewModel
     {
+        private readonly LoggedUserService _loggedUserService;
         private readonly UserTaskRepository _userTaskRepository;
         private UserTask editingTask = null;
 
@@ -49,20 +51,17 @@ namespace CadastroTarefas.ViewModels
         public ICommand RemoveCompletedCommand { get; set; }
         public ICommand CancelEditCommand { get; set; }
 
-        public LoginModel LoginModel { get; }
-
-        public TasksViewModel()
+        public TasksViewModel(LoggedUserService loggedUserService, UserTaskRepository userTaskRepository)
         {
-            _userTaskRepository = new UserTaskRepository(App.Database);
-            LoginModel = new LoginModel();
+            _loggedUserService = loggedUserService;
+            _userTaskRepository = userTaskRepository;
+
             SaveTaskCommand = new AsyncCommand(SaveTask);
             CompleteCommand = new AsyncCommand<UserTaskModel>(CompleteTask);
             RemoveTodoCommand = new AsyncCommand<UserTaskModel>(RemoveTodoTask);
             RemoveCompletedCommand = new AsyncCommand<UserTaskModel>(RemoveCompletedTask);
             EditCommand = new Command<UserTaskModel>(EnterEditMode);
             CancelEditCommand = new Command(CancelEdit);
-
-            LoadTasks().SafeFireAndForget();
         }
 
         private void CancelEdit()
@@ -77,13 +76,13 @@ namespace CadastroTarefas.ViewModels
             NewTaskDescription = "";
         }
 
-        private async Task RemoveTodoTask(UserTaskModel arg)
+        public async Task RemoveTodoTask(UserTaskModel arg)
         {
             await Task.Run(() => App.Database.GetCollection<UserTask>().Delete(arg.UserTask.Id));
             await LoadTodoTasks();
         }
 
-        private async Task RemoveCompletedTask(UserTaskModel arg)
+        public async Task RemoveCompletedTask(UserTaskModel arg)
         {
             await _userTaskRepository.RemoveTask(arg.UserTask.Id);
             await LoadCompletedTasks();
@@ -95,14 +94,14 @@ namespace CadastroTarefas.ViewModels
             await LoadTasks();
         }
 
-        private void EnterEditMode(UserTaskModel arg)
+        public void EnterEditMode(UserTaskModel arg)
         {
             IsEditMode = arg.IsEditMode = true;
             editingTask = arg.UserTask;
             NewTaskDescription = arg.UserTask.Description;
         }
 
-        private async Task LoadTasks()
+        public async Task LoadTasks()
         {
             await LoadTodoTasks();
             await LoadCompletedTasks();
@@ -111,18 +110,18 @@ namespace CadastroTarefas.ViewModels
         private async Task LoadTodoTasks()
         {
             TodoTasks.Clear();
-            var todoTasks = await _userTaskRepository.GetTodoTasks(App.LoggedUser.Id);
+            var todoTasks = await _userTaskRepository.GetTodoTasks(_loggedUserService.LoggedUser.Id);
             todoTasks.ForEach(t => TodoTasks.Add(new UserTaskModel { UserTask = t }));
         }
 
         private async Task LoadCompletedTasks()
         {
             CompletedTasks.Clear();
-            var completedTasks = await _userTaskRepository.GetCompletedTasks(App.LoggedUser.Id);
+            var completedTasks = await _userTaskRepository.GetCompletedTasks(_loggedUserService.LoggedUser.Id);
             completedTasks.ForEach(t => CompletedTasks.Add(new UserTaskModel { UserTask = t }));
         }
 
-        private async Task SaveTask()
+        public async Task SaveTask()
         {
             if (!string.IsNullOrEmpty(NewTaskDescription))
             {
@@ -133,7 +132,7 @@ namespace CadastroTarefas.ViewModels
                 }
                 else
                 {
-                    await _userTaskRepository.SaveNewTask(NewTaskDescription, App.LoggedUser.Id);
+                    await _userTaskRepository.SaveNewTask(NewTaskDescription, _loggedUserService.LoggedUser.Id);
                 }
 
                 NewTaskDescription = "";

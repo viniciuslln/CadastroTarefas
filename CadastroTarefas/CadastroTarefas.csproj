@@ -85,6 +85,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PagesText.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\LoggedUserService.cs" />
     <Compile Include="ViewModels\SignUpViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\TasksViewModel.cs" />
@@ -167,9 +168,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\DataLayer\DataLayer.csproj">
+    <ProjectReference Include="..\DataLayer\CadastroTarefas.DataLayer.csproj">
       <Project>{2390d66f-69a3-4f22-8513-9d8daae4a989}</Project>
-      <Name>DataLayer</Name>
+      <Name>CadastroTarefas.DataLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
